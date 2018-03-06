@@ -1,32 +1,19 @@
 package eu.epicclan.servermanager;
 
-import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Display;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.io.IOException;
-
-import eu.epicclan.servermanager.backend.manager.ServerManager;
-import eu.epicclan.servermanager.backend.manager.utils.Server;
+import eu.epicclan.servermanager.manager.ServerManager;
+import eu.epicclan.servermanager.utils.Server;
 import eu.epicclan.servermanager.utils.ExtraButton;
-
-import static android.provider.AlarmClock.EXTRA_MESSAGE;
+import eu.epicclan.servermanager.utils.ServerLayout;
 
 public class MainActivity extends AppCompatActivity {
-
-    public static final String EXTRA_MESSAGE = "";
 
     public static ServerManager manager;
     public static MainActivity main;
@@ -42,76 +29,11 @@ public class MainActivity extends AppCompatActivity {
         RelativeLayout layout = new RelativeLayout(main);
         int count = 0;
 
-        for(Server s : manager.serverList){
-            RelativeLayout sLayout = new RelativeLayout(main);
-            final Server sF = s;
+        for(final Server s : manager.serverList){
+            ServerLayout sLayout = new ServerLayout(main);
+            buildServer(sLayout, s);
 
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inScaled = false;
-
-            ExtraButton stopButton = new ExtraButton(main, BitmapFactory.decodeResource(main.getResources(), R.drawable.button_stop, options));
-            stopButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    try {
-                        manager.conM.exec("sh " + sF.stopPath);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-            int stopButtonId = stopButton.generateViewId();
-            stopButton.setId(stopButtonId);
-
-            ExtraButton startButton = new ExtraButton(main, BitmapFactory.decodeResource(main.getResources(), R.drawable.button_start, options));
-            startButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    try {
-                        manager.conM.exec("sh " + sF.startPath);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-            int startButtonId = startButton.generateViewId();
-            startButton.setId(startButtonId);
-
-            TextView desc = new TextView(main);
-            desc.setText(s.desc);
-
-            RelativeLayout.LayoutParams descParam = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-            descParam.addRule(RelativeLayout.ALIGN_BOTTOM,  startButton.getId());
-            desc.setLayoutParams(descParam);
-
-            desc.setId(RelativeLayout.generateViewId());
-
-            TextView name = new TextView(main);
-            name.setText(s.name);
-            name.setTypeface(name.getTypeface(), Typeface.BOLD);
-
-            RelativeLayout.LayoutParams nameParam = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-            nameParam.addRule(RelativeLayout.ABOVE, desc.getId());
-            name.setLayoutParams(nameParam);
-
-            sLayout.addView(stopButton);
-            sLayout.addView(startButton);
-            sLayout.addView(name);
-            sLayout.addView(desc);
-
-            stopButton.setLayoutParams(getNewParams(200, 200, -1));
-            startButton.setLayoutParams(getNewParams(200, 200, stopButton.getId()));
-
-            View v = new View(main);
-            v.setBackgroundColor(Color.BLACK);
-
-            RelativeLayout.LayoutParams vParam = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 5);
-            vParam.addRule(RelativeLayout.BELOW, startButton.getId());
-            v.setLayoutParams(vParam);
-
-            sLayout.addView(v);
-
-            sLayout.setY(count * 205);
+            sLayout.setY(count * 145);
             layout.addView(sLayout);
 
             count++;
@@ -120,23 +42,46 @@ public class MainActivity extends AppCompatActivity {
         main.setContentView(layout);
     }
 
-    public void sendMessage(View view){
-        Intent intent = new Intent(this, DisplayMessageActivity.class);
-        EditText editText = (EditText) findViewById(R.id.editText);
-        String message = editText.getText().toString();
-        intent.putExtra(EXTRA_MESSAGE, message);
-        startActivity(intent);
+
+
+
+
+    public static void buildServer(ServerLayout layout, Server s){
+        buildButtons(layout, s);
+        buildText(layout, s);
+        buildLines(layout);
     }
 
-    public static RelativeLayout.LayoutParams getNewParams(int width, int heigth, int right){
-        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(width, heigth);
-        if(right == -1){
-            lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-        } else {
-            lp.addRule(RelativeLayout.LEFT_OF, right);
-        }
+    public static void buildButtons(ServerLayout layout, Server s){
+        layout.stopButton = new ExtraButton(main, main.getResources().getDrawable(R.drawable.button_stop), "sh " + s.stopPath);
+        layout.stopButton.setLayoutParams(new ParamsBuilder(140, 140).alignTo(-1, RelativeLayout.ALIGN_PARENT_RIGHT).build());
+        layout.addView(layout.stopButton);
 
-        return lp;
+        layout.startButton = new ExtraButton(main, main.getResources().getDrawable(R.drawable.button_start), "sh " + s.startPath);
+        layout.startButton.setLayoutParams(new ParamsBuilder(140, 140).alignTo(layout.stopButton.getId(), RelativeLayout.LEFT_OF).build());
+        layout.addView(layout.startButton);
+    }
+
+    public static void buildText(ServerLayout layout, Server s){
+        layout.desc = new TextView(main);
+        layout.desc.setText(s.desc);
+        layout.desc.setLayoutParams(new ParamsBuilder(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT).alignTo(layout.startButton.getId(), RelativeLayout.ALIGN_BOTTOM).build());
+        layout.desc.setId(RelativeLayout.generateViewId());
+
+        layout.name = new TextView(main);
+        layout.name.setText(s.name);
+        layout.name.setTypeface(layout.name.getTypeface(), Typeface.BOLD);
+        layout.name.setLayoutParams(new ParamsBuilder(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT).alignTo(layout.desc.getId(), RelativeLayout.ABOVE).build());
+
+        layout.addView(layout.name);
+        layout.addView(layout.desc);
+    }
+
+    public static void buildLines(ServerLayout layout){
+        layout.partition = new View(main);
+        layout.partition.setBackgroundColor(Color.BLACK);
+        layout.partition.setLayoutParams(new ParamsBuilder(RelativeLayout.LayoutParams.MATCH_PARENT, 5).alignTo(layout.startButton.getId(), RelativeLayout.BELOW).build());
+        layout.addView(layout.partition);
     }
 
 }
