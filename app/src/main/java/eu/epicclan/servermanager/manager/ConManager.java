@@ -1,4 +1,4 @@
-package eu.epicclan.servermanager.backend.manager;
+package eu.epicclan.servermanager.manager;
 
 import android.os.AsyncTask;
 
@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import eu.epicclan.servermanager.MainActivity;
-import eu.epicclan.servermanager.backend.manager.utils.Server;
+import eu.epicclan.servermanager.utils.Server;
 
 public class ConManager {
 

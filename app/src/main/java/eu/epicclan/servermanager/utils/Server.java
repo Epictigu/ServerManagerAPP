@@ -1,4 +1,4 @@
-package eu.epicclan.servermanager.backend.manager.utils;
+package eu.epicclan.servermanager.utils;
 
 public class Server {
     public String startPath;
