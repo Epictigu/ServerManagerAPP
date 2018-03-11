@@ -12,6 +12,8 @@ public class ParamsBuilder {
     private int width = 0;
     private int height = 0;
 
+    private boolean center = false;
+
     public Map<Integer, Integer> rules = new HashMap<Integer, Integer>();
 
     public ParamsBuilder(int width, int height){
@@ -30,12 +32,20 @@ public class ParamsBuilder {
             }
             params.addRule(i, id);
         }
+        if(center){
+
+        }
 
         return params;
     }
 
     public ParamsBuilder alignTo(int id, int rule){
         rules.put(rule, id);
+        return this;
+    }
+
+    public ParamsBuilder center(){
+        center = true;
         return this;
     }
 

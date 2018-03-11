@@ -4,18 +4,14 @@ import android.os.AsyncTask;
 
 public class DelayedRunnable extends AsyncTask<String, Void, String>{
 
-    private Runnable background = null;
-    private Runnable postExec = null;
+    public Runnable background = null;
+    public Runnable postExec = null;
 
-    private long delay = 0l;
+    public long delay = 0L;
 
-    public DelayedRunnable(Runnable... tasks){
-        if(tasks[0] != null){
-            background = tasks[0];
-        }
-        if(tasks[1] != null){
-            postExec = tasks[1];
-        }
+    public DelayedRunnable(Runnable background, Runnable postExec){
+        this.background = background;
+        this.postExec = postExec;
     }
 
     @Override

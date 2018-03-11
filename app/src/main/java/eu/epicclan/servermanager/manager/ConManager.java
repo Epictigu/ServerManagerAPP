@@ -24,12 +24,15 @@ public class ConManager {
     public ConManager(String ip, String password) throws Exception{
         this.ip = ip;
         this.password = password;
+    }
 
+    public void setup() throws IOException{
         connection = new Socket(this.ip, 9955);
-        getServers();
     }
 
     public void getServers() throws IOException {
+        setup();
+
         OutputStreamWriter os = new OutputStreamWriter(connection.getOutputStream());
         PrintWriter pw = new PrintWriter(os);
         pw.println(password);
@@ -47,6 +50,34 @@ public class ConManager {
             String[] args = s.split(";");
             MainActivity.manager.serverList.add(new Server(args[2], args[3], args[0], args[1]));
         }
+
+        connection.close();
+    }
+
+    public boolean checkPassword(String password){
+        try {
+            setup();
+
+            OutputStreamWriter os = new OutputStreamWriter(connection.getOutputStream());
+            PrintWriter pw = new PrintWriter(os);
+            pw.println("checkpw");
+            pw.println(password);
+            pw.flush();
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            List<String> lines = new ArrayList<String>();
+            lines.add(br.readLine());
+
+            connection.close();
+            if(lines.get(0).equalsIgnoreCase("0")){
+                return false;
+            } else {
+                return true;
+            }
+        } catch(IOException e){
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public void exec(String path) throws IOException{
@@ -64,7 +95,7 @@ public class ConManager {
         @Override
         protected String doInBackground(String... strings) {
             try {
-                connection = new Socket(ip, 9955);
+                setup();
 
                 OutputStreamWriter os = new OutputStreamWriter(connection.getOutputStream());
                 PrintWriter pw = new PrintWriter(os);
@@ -72,6 +103,8 @@ public class ConManager {
                 pw.println("exec");
                 pw.println(path);
                 pw.flush();
+
+                connection.close();
             } catch(IOException e){
                 e.printStackTrace();
             }
