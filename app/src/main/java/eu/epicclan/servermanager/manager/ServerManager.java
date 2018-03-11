@@ -2,6 +2,7 @@ package eu.epicclan.servermanager.manager;
 
 import android.os.AsyncTask;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +18,15 @@ public class ServerManager {
         new AsyncLoad(this).execute();
     }
 
+    public void load(String password){
+        conM.password = password;
+        try {
+            conM.getServers();
+        } catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+
     private class AsyncLoad extends AsyncTask<String, Void, String>{
 
         public ServerManager sm = null;
@@ -27,7 +37,7 @@ public class ServerManager {
         @Override
         protected String doInBackground(String... strings) {
             try {
-                sm.conM = new ConManager("185.114.226.146", "epic!");
+                conM = new ConManager("185.114.226.146", "none");
             } catch(Exception e) {
                 e.printStackTrace();
             }
@@ -36,9 +46,7 @@ public class ServerManager {
         }
 
         @Override
-        protected void onPostExecute(String s) {
-            MainActivity.buildLayout();
-        }
+        protected void onPostExecute(String s) {MainActivity.buildLogin();}
         @Override
         protected void onPreExecute() {}
         @Override

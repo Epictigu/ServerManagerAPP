@@ -1,10 +1,14 @@
 package eu.epicclan.servermanager;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -17,15 +21,98 @@ public class MainActivity extends AppCompatActivity {
 
     public static ServerManager manager;
     public static MainActivity main;
+    public static SharedPreferences pref;
+
+    public static String savedPassword = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         main = this;
+        loadSavedPassword();
         new ServerManager();
     }
 
+    public static void buildLogin(){
+        main.setContentView(R.layout.layout_password);
+        main.findViewById(R.id.loginb).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                login();
+            }
+        });
+
+        if(!savedPassword.equals("")){
+            ((EditText)main.findViewById(R.id.password)).setText(savedPassword);
+            ((CheckBox)main.findViewById(R.id.savepw)).setChecked(true);
+            login();
+        }
+    }
+
+    public static void loadSavedPassword(){
+        pref = main.getPreferences(Context.MODE_PRIVATE);
+        savedPassword = pref.getString("saved_password", "");
+    }
+
+    public static void setSavedPassword(String password){
+        SharedPreferences.Editor edit = pref.edit();
+        edit.putString("saved_password", password);
+        edit.commit();
+    }
+
+    public static void login(){
+        main.findViewById(R.id.wrongpw).setVisibility(View.INVISIBLE);
+
+        final DelayedRunnable postExec = new DelayedRunnable(null, null);
+
+        new DelayedRunnable(new Runnable() {
+            @Override
+            public void run() {
+                final String password = ((EditText) main.findViewById(R.id.password)).getText().toString();
+                System.out.println(password);
+                if (password.equalsIgnoreCase("")) {
+                    loginFailed();
+                    return;
+                }
+                boolean check = manager.conM.checkPassword(password);
+
+                if (check) {
+                    manager.load(password);
+                    postExec.postExec = new Runnable() {
+                        @Override
+                        public void run() {
+                            if(((CheckBox)main.findViewById(R.id.savepw)).isChecked()){
+                                setSavedPassword(password);
+                            } else {
+                                setSavedPassword("");
+                            }
+                            buildLayout();
+                        }
+                    };
+                } else {
+                    savedPassword = "";
+                    postExec.postExec = new Runnable() {
+                        @Override
+                        public void run() {
+                            loginFailed();
+                        }
+                    };
+                }
+            }
+        }, new Runnable() {
+            @Override
+            public void run() {
+                postExec.execute();
+            }
+        }).execute();
+    }
+
+    public static void loginFailed(){
+        main.findViewById(R.id.wrongpw).setVisibility(View.VISIBLE);
+    }
+
     public static void buildLayout(){
+        System.out.println("Test");
         RelativeLayout layout = new RelativeLayout(main);
         int count = 0;
 
@@ -40,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         main.setContentView(layout);
+        layout.invalidate();
     }
 
 
