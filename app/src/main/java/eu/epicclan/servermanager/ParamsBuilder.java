@@ -1,5 +1,6 @@
 package eu.epicclan.servermanager;
 
+import android.view.Gravity;
 import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
