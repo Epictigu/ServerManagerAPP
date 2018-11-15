@@ -37,7 +37,7 @@ public class ServerManager {
         @Override
         protected String doInBackground(String... strings) {
             try {
-                conM = new ConManager("185.114.226.146", "none");
+                conM = new ConManager("91.200.100.92", "none");
             } catch(Exception e) {
                 e.printStackTrace();
             }

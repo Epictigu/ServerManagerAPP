@@ -7,12 +7,14 @@ import android.graphics.LightingColorFilter;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.AppCompatImageButton;
+import android.text.Layout;
 import android.view.View;
 
 import java.io.IOException;
 
 import eu.epicclan.servermanager.DelayedRunnable;
 import eu.epicclan.servermanager.MainActivity;
+import eu.epicclan.servermanager.manager.LayoutManager;
 
 public class ExtraButton extends AppCompatImageButton{
 
@@ -61,7 +63,11 @@ public class ExtraButton extends AppCompatImageButton{
                 }).setDelay(200l).execute();
 
                 try {
-                    MainActivity.manager.conM.exec(cmd);
+                    if(cmd.equalsIgnoreCase("start")){
+                        MainActivity.manager.conM.exec("sh " + LayoutManager.clickedOn.s.startPath);
+                    } else if(cmd.equalsIgnoreCase("stop")){
+                        MainActivity.manager.conM.exec("sh " + LayoutManager.clickedOn.s.stopPath);
+                    }
                 } catch(IOException e){e.printStackTrace();}
             }
         });
