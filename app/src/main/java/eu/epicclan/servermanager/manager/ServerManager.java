@@ -46,11 +46,7 @@ public class ServerManager {
         }
 
         @Override
-<<<<<<< HEAD
         protected void onPostExecute(String s) {LayoutManager.buildLogin();}
-=======
-        protected void onPostExecute(String s) {MainActivity.buildLogin();}
->>>>>>> 2993c324c0a4033210577270ccc373c377f392be
         @Override
         protected void onPreExecute() {}
         @Override

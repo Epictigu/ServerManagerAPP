@@ -1,17 +1,8 @@
 package eu.epicclan.servermanager;
 
-<<<<<<< HEAD
 import android.widget.RelativeLayout;
 
 import java.util.HashMap;
-=======
-import android.view.Gravity;
-import android.widget.RelativeLayout;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
->>>>>>> 2993c324c0a4033210577270ccc373c377f392be
 import java.util.Map;
 
 public class ParamsBuilder {
