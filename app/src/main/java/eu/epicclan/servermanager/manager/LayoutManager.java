@@ -1,11 +1,17 @@
 package eu.epicclan.servermanager.manager;
 
+<<<<<<< HEAD
 import android.app.ActionBar;
+=======
+>>>>>>> 2993c324c0a4033210577270ccc373c377f392be
 import android.view.View;
 import android.widget.RelativeLayout;
 
 import java.util.HashMap;
+<<<<<<< HEAD
 import java.util.LinkedHashMap;
+=======
+>>>>>>> 2993c324c0a4033210577270ccc373c377f392be
 import java.util.Map;
 
 import eu.epicclan.servermanager.MainActivity;
@@ -19,16 +25,23 @@ import eu.epicclan.servermanager.utils.ServerLayout;
 public class LayoutManager {
 
     private static Map<Server, ServerLayout> availableTasks = new HashMap<Server, ServerLayout>();
+<<<<<<< HEAD
     public static LinkedHashMap<String, Category> categories = new LinkedHashMap<String, Category>();;
 
     public static RelativeLayout layout;
+=======
+
+>>>>>>> 2993c324c0a4033210577270ccc373c377f392be
     public static ServerLayout clickedOn = null;
     private static ExtraButton stopButton = null;
     private static ExtraButton startButton = null;
 
+<<<<<<< HEAD
     private static MainActivity a = MainActivity.main;
 
 
+=======
+>>>>>>> 2993c324c0a4033210577270ccc373c377f392be
 
     public static void setLastClicked(ServerLayout clickedOn){
         if(clickedOn == LayoutManager.clickedOn){
@@ -38,6 +51,7 @@ public class LayoutManager {
         LayoutManager.clickedOn = clickedOn;
     }
 
+<<<<<<< HEAD
 
 
     public static void buildLayout(){
@@ -79,10 +93,36 @@ public class LayoutManager {
 
 
     private static void displayAvailableTasks(boolean initialize){
+=======
+    public static void displayAvailableTasks(){
+        int serverAmount = 0;
+        int seperatorAmount = 0;
+
+        for(String str : MainActivity.categories.keySet()){
+            Category c = MainActivity.categories.get(str);
+            c.sep.setY(serverAmount * 115 + seperatorAmount * 80 + 30);
+            MainActivity.layout.addView(c.sep);
+            seperatorAmount++;
+
+            for(Server s : c.servers){
+                ServerLayout sLayout = new ServerLayout(MainActivity.main, s);
+                sLayout.buildServer();
+                sLayout.setY(serverAmount * 115 + seperatorAmount * 80 + 20);
+                MainActivity.layout.addView(sLayout);
+                availableTasks.put(s, sLayout);
+
+                serverAmount++;
+            }
+        }
+    }
+
+    public static void repaintAvailableTasks(){
+>>>>>>> 2993c324c0a4033210577270ccc373c377f392be
         int serverAmount = 0;
         int seperatorAmount = 0;
         int openTasks = 0;
 
+<<<<<<< HEAD
         for(String str : categories.keySet()){
             Category c = categories.get(str);
             c.sep.setY(serverAmount * 115 + seperatorAmount * 80 + 30 + openTasks * 200);
@@ -132,12 +172,45 @@ public class LayoutManager {
 
     public static void initializeButtons(RelativeLayout layout){
         stopButton = new ExtraButton(a.main, a.main.getResources().getDrawable(R.drawable.button_stop), "stop");
+=======
+        for(String str : MainActivity.categories.keySet()){
+            Category c = MainActivity.categories.get(str);
+            c.sep.setY(serverAmount * 115 + seperatorAmount * 80 + 30 + openTasks * 200);
+            seperatorAmount++;
+
+            for(Server s : c.servers){
+                ServerLayout sLayout = availableTasks.get(s);
+                sLayout.setY(serverAmount * 115 + seperatorAmount * 80 + 20 + openTasks * 200);
+                serverAmount++;
+
+                if(clickedOn == sLayout) {
+                    openTasks++;
+                    stopButton.setY(serverAmount * 115 + seperatorAmount * 80 + 40);
+                    stopButton.setVisibility(View.VISIBLE);
+                    startButton.setY(serverAmount * 115 + seperatorAmount * 80 + 40);
+                    startButton.setVisibility(View.VISIBLE);
+                }
+            }
+        }
+        if(clickedOn == null){
+            stopButton.setVisibility(View.INVISIBLE);
+            startButton.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    public static void initializeButtons(RelativeLayout layout){
+        stopButton = new ExtraButton(MainActivity.main, MainActivity.main.getResources().getDrawable(R.drawable.button_stop), "stop");
+>>>>>>> 2993c324c0a4033210577270ccc373c377f392be
         stopButton.setX(170F);
         stopButton.setLayoutParams(new ParamsBuilder(140, 140).alignTo(-1, RelativeLayout.CENTER_HORIZONTAL).build());
         stopButton.setVisibility(View.INVISIBLE);
         layout.addView(stopButton);
 
+<<<<<<< HEAD
         startButton = new ExtraButton(a.main, a.main.getResources().getDrawable(R.drawable.button_start), "start");
+=======
+        startButton = new ExtraButton(MainActivity.main, MainActivity.main.getResources().getDrawable(R.drawable.button_start), "start");
+>>>>>>> 2993c324c0a4033210577270ccc373c377f392be
         startButton.setX(-170F);
         startButton.setLayoutParams(new ParamsBuilder(140, 140).alignTo(-1, RelativeLayout.CENTER_HORIZONTAL).build());
         startButton.setVisibility(View.INVISIBLE);
