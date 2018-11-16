@@ -46,7 +46,7 @@ public class ServerManager {
         }
 
         @Override
-        protected void onPostExecute(String s) {MainActivity.buildLogin();}
+        protected void onPostExecute(String s) {LayoutManager.buildLogin();}
         @Override
         protected void onPreExecute() {}
         @Override

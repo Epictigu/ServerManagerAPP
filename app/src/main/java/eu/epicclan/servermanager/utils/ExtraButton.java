@@ -7,7 +7,6 @@ import android.graphics.LightingColorFilter;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.AppCompatImageButton;
-import android.text.Layout;
 import android.view.View;
 
 import java.io.IOException;
