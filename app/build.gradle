@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 
 android {
-    buildToolsVersion "28.0.3"
-    compileSdkVersion 26
+    buildToolsVersion "30.0.0"
+    compileSdkVersion 29
     defaultConfig {
         applicationId "eu.epicclan.servermanager"
         minSdkVersion 17

@@ -19,7 +19,7 @@ public class ConManager {
     public String ip;
     public String password;
 
-    public Socket connection;
+    public Socket connection = null;
 
     public ConManager(String ip, String password) throws Exception{
         this.ip = ip;
@@ -83,6 +83,32 @@ public class ConManager {
     public void exec(String path) throws IOException{
         new AsyncExec(path).execute();
     }
+
+    public void reloadConfig() throws IOException{
+        setup();
+
+        OutputStreamWriter os = new OutputStreamWriter(connection.getOutputStream());
+        PrintWriter pw = new PrintWriter(os);
+        pw.println(password);
+        pw.println("reload");
+        pw.flush();
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        List<String> lines = new ArrayList<String>();
+        lines.add(br.readLine());
+        while(br.ready()) {
+            lines.add(br.readLine());
+        }
+
+        MainActivity.manager.serverList.clear();
+        for(String s : lines) {
+            String[] args = s.split(";");
+            MainActivity.manager.serverList.add(new Server(args[2], args[3], args[0], args[1], args[4], args[5]));
+        }
+
+        connection.close();
+    }
+
 
     private class AsyncExec extends AsyncTask<String, Void, String> {
 

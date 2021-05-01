@@ -2,12 +2,15 @@ package eu.epicclan.servermanager.manager;
 
 import android.app.ActionBar;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import eu.epicclan.servermanager.DelayedRunnable;
 import eu.epicclan.servermanager.MainActivity;
 import eu.epicclan.servermanager.ParamsBuilder;
 import eu.epicclan.servermanager.R;
@@ -50,6 +53,13 @@ public class LayoutManager {
         a.getSupportActionBar().setCustomView(R.layout.layout_toolbar);
         a.getSupportActionBar().show();
 
+        ImageButton reloadButton = (ImageButton) a.findViewById(R.id.reloadButton);
+        reloadButton.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                reloadConfig();
+            }
+        });
+
         categories.put("General", new Category("General"));
 
         for(Server s : a.manager.serverList){
@@ -61,6 +71,45 @@ public class LayoutManager {
 
         LayoutManager.initializeAvailableTasks();
         LayoutManager.initializeButtons(layout);
+    }
+
+    public static void reloadConfig(){
+        new DelayedRunnable(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    a.manager.conM.reloadConfig();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Runnable() {
+            @Override
+            public void run() {
+                for(String str : categories.keySet()) {
+                    Category c = categories.get(str);
+                    layout.removeView(c.sep);
+                    for(Server s : c.servers) {
+                        ServerLayout sLayout = availableTasks.get(s);
+                        layout.removeView(sLayout);
+                    }
+                }
+                stopButton.setVisibility(View.INVISIBLE);
+                startButton.setVisibility(View.INVISIBLE);
+
+                categories.clear();
+                categories.put("General", new Category("General"));
+
+                for(Server s : a.manager.serverList){
+                    if(!categories.containsKey(s.category)){
+                        categories.put(s.category, new Category(s.category));
+                    }
+                    categories.get(s.category).servers.add(s);
+                }
+
+                LayoutManager.initializeAvailableTasks();
+            }
+        }).execute();
     }
 
     public static void buildLogin(){
