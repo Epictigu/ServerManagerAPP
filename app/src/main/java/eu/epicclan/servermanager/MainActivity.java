@@ -1,7 +1,7 @@
 package eu.epicclan.servermanager;
 
 import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import eu.epicclan.servermanager.manager.LoginManager;
 import eu.epicclan.servermanager.manager.ServerManager;

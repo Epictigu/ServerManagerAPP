@@ -80,7 +80,7 @@ public class LoginManager {
     public static void setSavedPassword(String password){
         SharedPreferences.Editor edit = a.pref.edit();
         edit.putString("saved_password", password);
-        edit.commit();
+        edit.apply();
     }
 
     public static void loginFailed(){
