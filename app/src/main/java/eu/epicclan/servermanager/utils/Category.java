@@ -8,7 +8,7 @@ import eu.epicclan.servermanager.MainActivity;
 public class Category {
 
     public String title;
-    public Seperator sep;
+    public Separator sep;
     public List<Server> servers = new ArrayList<Server>();
 
     public Category(String title){
@@ -17,7 +17,7 @@ public class Category {
     }
 
     private void createSeperator(){
-        this.sep = new Seperator(MainActivity.main, title);
+        this.sep = new Separator(MainActivity.main, title);
     }
 
 }

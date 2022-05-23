@@ -3,7 +3,10 @@ package eu.epicclan.servermanager.manager;
 import android.app.ActionBar;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -24,7 +27,7 @@ public class LayoutManager {
     private static Map<Server, ServerLayout> availableTasks = new HashMap<Server, ServerLayout>();
     public static LinkedHashMap<String, Category> categories = new LinkedHashMap<String, Category>();;
 
-    public static RelativeLayout layout;
+    public static LinearLayout layout;
     public static ServerLayout clickedOn = null;
     private static ExtraButton stopButton = null;
     private static ExtraButton startButton = null;
@@ -44,15 +47,14 @@ public class LayoutManager {
 
 
     public static void buildLayout(){
-        layout = new RelativeLayout(a);
-        layout.setBackgroundColor(a.getResources().getColor(R.color.colorBackground));
+        a.setContentView(R.layout.layout_main);
+        layout = a.findViewById(R.id.serverView);
 
-        a.setContentView(layout);
-
-        a.getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        a.getSupportActionBar().setCustomView(R.layout.layout_toolbar);
-        a.getSupportActionBar().show();
-
+//        layout = new RelativeLayout(a);
+//        layout.setBackgroundColor(a.getResources().getColor(R.color.colorBackground));
+//
+//        a.setContentView(layout);
+//
         ImageButton reloadButton = (ImageButton) a.findViewById(R.id.reloadButton);
         reloadButton.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
@@ -70,7 +72,7 @@ public class LayoutManager {
         }
 
         LayoutManager.initializeAvailableTasks();
-        LayoutManager.initializeButtons(layout);
+//        LayoutManager.initializeButtons(layout);
     }
 
     public static void reloadConfig(){
@@ -113,7 +115,6 @@ public class LayoutManager {
     }
 
     public static void buildLogin(){
-        a.getSupportActionBar().hide();
         a.setContentView(R.layout.layout_password);
         a.findViewById(R.id.loginb).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,42 +135,40 @@ public class LayoutManager {
 
         for(String str : categories.keySet()){
             Category c = categories.get(str);
-            c.sep.setY(serverAmount * 115 + seperatorAmount * 80 + 30 + openTasks * 200);
-            seperatorAmount++;
             if(initialize){
                 layout.addView(c.sep);
             }
 
-            for(Server s : c.servers){
-                ServerLayout sLayout = availableTasks.get(s);
-                if(initialize){
-                    sLayout = new ServerLayout(a.main, s);
-                    sLayout.buildServer();
-                    availableTasks.put(s, sLayout);
+//            for(Server s : c.servers){
+//                ServerLayout sLayout = availableTasks.get(s);
+//                if(initialize){
+//                    sLayout = new ServerLayout(a.main, s);
+//                    sLayout.buildServer();
+//                    availableTasks.put(s, sLayout);
+//
+//                    sLayout.setY(serverAmount * 115 + seperatorAmount * 80 + 20 + openTasks * 200);
+//                    layout.addView(sLayout);
+//                } else {
+//                    sLayout.setY(serverAmount * 115 + seperatorAmount * 80 + 20 + openTasks * 200);
+//
+//                    if(clickedOn == sLayout) {
+//                        openTasks++;
+//                        stopButton.setY((serverAmount + 1) * 115 + seperatorAmount * 80 + 40);
+//                        stopButton.setVisibility(View.VISIBLE);
+//                        startButton.setY((serverAmount + 1) * 115 + seperatorAmount * 80 + 40);
+//                        startButton.setVisibility(View.VISIBLE);
+//                    }
+//                }
+//
+//                serverAmount++;
+//            }
 
-                    sLayout.setY(serverAmount * 115 + seperatorAmount * 80 + 20 + openTasks * 200);
-                    layout.addView(sLayout);
-                } else {
-                    sLayout.setY(serverAmount * 115 + seperatorAmount * 80 + 20 + openTasks * 200);
-
-                    if(clickedOn == sLayout) {
-                        openTasks++;
-                        stopButton.setY((serverAmount + 1) * 115 + seperatorAmount * 80 + 40);
-                        stopButton.setVisibility(View.VISIBLE);
-                        startButton.setY((serverAmount + 1) * 115 + seperatorAmount * 80 + 40);
-                        startButton.setVisibility(View.VISIBLE);
-                    }
-                }
-
-                serverAmount++;
-            }
-
-            if(!initialize){
-                if(clickedOn == null){
-                    stopButton.setVisibility(View.INVISIBLE);
-                    startButton.setVisibility(View.INVISIBLE);
-                }
-            }
+//            if(!initialize){
+//                if(clickedOn == null){
+//                    stopButton.setVisibility(View.INVISIBLE);
+//                    startButton.setVisibility(View.INVISIBLE);
+//                }
+//            }
         }
     }
     public static void initializeAvailableTasks(){
