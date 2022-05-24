@@ -7,6 +7,8 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import androidx.core.graphics.drawable.RoundedBitmapDrawable;
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
+
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -36,6 +38,10 @@ public class ServerLayout extends RelativeLayout implements View.OnClickListener
         this.s = server;
         this.setClickable(true);
         this.setOnClickListener(this);
+
+        MarginLayoutParams layoutParams = new MarginLayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        layoutParams.setMargins(0, 10, 0, 10);
+        this.setLayoutParams(layoutParams);
     }
 
     public void buildServer(){
@@ -50,10 +56,15 @@ public class ServerLayout extends RelativeLayout implements View.OnClickListener
         }, new Runnable() {
             @Override
             public void run() {
+                DisplayMetrics displayMetrics = new DisplayMetrics();
+                MainActivity.main.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+
+                int img_size = displayMetrics.widthPixels / 10;
+
                 pic = new ImageView(MainActivity.main);
                 pic.setImageDrawable(headPic);
                 pic.setId(generateViewId());
-                pic.setLayoutParams(new ParamsBuilder(LayoutParams.WRAP_CONTENT , LayoutParams.WRAP_CONTENT).alignTo(-1, ALIGN_PARENT_LEFT).build());
+                pic.setLayoutParams(new ParamsBuilder(img_size , img_size).alignTo(-1, ALIGN_PARENT_LEFT).build());
                 pic.setX(40);
                 addView(pic);
 
@@ -61,7 +72,9 @@ public class ServerLayout extends RelativeLayout implements View.OnClickListener
                 name.setText(s.name);
                 name.setTextColor(Color.WHITE);
                 name.setTypeface(name.getTypeface(), Typeface.BOLD);
-                name.setY(30); name.setX(80);
+                name.measure(0, 0);
+                name.setY((img_size - name.getMeasuredHeight()) / 2);
+                name.setX(80);
                 LayoutParams lParams = new ParamsBuilder(1000, LayoutParams.WRAP_CONTENT).alignTo(pic.getId(), RIGHT_OF).build();
                 name.setLayoutParams(lParams);
                 addView(name);
@@ -83,6 +96,6 @@ public class ServerLayout extends RelativeLayout implements View.OnClickListener
     @Override
     public void onClick(View v) {
         LayoutManager.setLastClicked(this);
-        LayoutManager.repaintAvailableTasks();
+//        LayoutManager.repaintAvailableTasks();
     }
 }

@@ -2,12 +2,20 @@ package eu.epicclan.servermanager.manager;
 
 import android.os.AsyncTask;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.Reader;
+import java.net.HttpURLConnection;
 import java.net.Socket;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,27 +39,58 @@ public class ConManager {
     }
 
     public void getServers() throws IOException {
-        setup();
+//        setup();
+//
+//        OutputStreamWriter os = new OutputStreamWriter(connection.getOutputStream());
+//        PrintWriter pw = new PrintWriter(os);
+//        pw.println(password);
+//        pw.println("getservers");
+//        pw.flush();
+//
+//        BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+//        List<String> lines = new ArrayList<String>();
+//        lines.add(br.readLine());
+//        while(br.ready()) {
+//            lines.add(br.readLine());
+//        }
+//
+//        for(String s : lines) {
+//            System.out.println(s);
+//            String[] args = s.split(";");
+//            MainActivity.manager.serverList.add(new Server(args[2], args[3], args[0], args[1], args[4], args[5]));
+//        }
+//
+//        connection.close();
 
-        OutputStreamWriter os = new OutputStreamWriter(connection.getOutputStream());
-        PrintWriter pw = new PrintWriter(os);
-        pw.println(password);
-        pw.println("getservers");
-        pw.flush();
+        URL url = new URL("https://epicclan.de/api/getservers");
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        con.setRequestProperty("Accept", "application/json");
 
-        BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        List<String> lines = new ArrayList<String>();
-        lines.add(br.readLine());
-        while(br.ready()) {
-            lines.add(br.readLine());
+        int errorCode = con.getResponseCode();
+        if(errorCode > 299){
+            System.out.println("Konnte den HTTP Request nicht durchführen! [Error-Code: " + errorCode + "]");
+            return;
         }
 
-        for(String s : lines) {
-            String[] args = s.split(";");
-            MainActivity.manager.serverList.add(new Server(args[2], args[3], args[0], args[1], args[4], args[5]));
+        BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuffer content = new StringBuffer();
+        while((inputLine = in.readLine()) != null){
+            content.append(inputLine);
         }
+        in.close();
+        con.disconnect();
 
-        connection.close();
+        try {
+            JSONObject serverJSON = new JSONObject(content.toString());
+            JSONArray servers = (JSONArray) serverJSON.get("servers");
+            for(int i = 0; i < servers.length(); i++){
+                JSONObject server = (JSONObject) servers.get(i);
+                MainActivity.manager.serverList.add(new Server("", "", server.getString("name"), server.getString("desc"), server.getString("category"), server.getString("icon")));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     public boolean checkPassword(String password){

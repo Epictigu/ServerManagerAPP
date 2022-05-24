@@ -96,8 +96,8 @@ public class LayoutManager {
                         layout.removeView(sLayout);
                     }
                 }
-                stopButton.setVisibility(View.INVISIBLE);
-                startButton.setVisibility(View.INVISIBLE);
+                //stopButton.setVisibility(View.INVISIBLE);
+                //startButton.setVisibility(View.INVISIBLE);
 
                 categories.clear();
                 categories.put("General", new Category("General"));
@@ -139,6 +139,24 @@ public class LayoutManager {
                 layout.addView(c.sep);
             }
 
+            for(Server s : c.servers){
+                ServerLayout sLayout = availableTasks.get(s);
+                if(initialize){
+                    sLayout = new ServerLayout(a.main, s);
+                    sLayout.buildServer();
+                    availableTasks.put(s, sLayout);
+
+                    layout.addView(sLayout);
+                } else {
+                    if(clickedOn == sLayout) {
+//                        stopButton.setY((serverAmount + 1) * 115 + seperatorAmount * 80 + 40);
+//                        stopButton.setVisibility(View.VISIBLE);
+//                        startButton.setY((serverAmount + 1) * 115 + seperatorAmount * 80 + 40);
+//                        startButton.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+
 //            for(Server s : c.servers){
 //                ServerLayout sLayout = availableTasks.get(s);
 //                if(initialize){
@@ -174,9 +192,9 @@ public class LayoutManager {
     public static void initializeAvailableTasks(){
         displayAvailableTasks(true);
     }
-    public static void repaintAvailableTasks(){
-        displayAvailableTasks(false);
-    }
+    //public static void repaintAvailableTasks(){
+    //    displayAvailableTasks(false);
+    //}
 
     public static void initializeButtons(RelativeLayout layout){
         stopButton = new ExtraButton(a.main, a.main.getResources().getDrawable(R.drawable.button_stop), "stop");
