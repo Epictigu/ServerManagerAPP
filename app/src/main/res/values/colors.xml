@@ -6,4 +6,6 @@
     <color name="colorBackground">#2b2b2b</color>
 
     <color name="mainColor">#FB2260</color>
+    <color name="status_online">#FB2260</color>
+    <color name="status_offline">#5C5B5B</color>
 </resources>

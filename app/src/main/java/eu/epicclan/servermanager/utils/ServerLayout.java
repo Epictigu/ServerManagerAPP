@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
+
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.RoundedBitmapDrawable;
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 
@@ -20,6 +22,8 @@ import java.net.URL;
 import eu.epicclan.servermanager.DelayedRunnable;
 import eu.epicclan.servermanager.MainActivity;
 import eu.epicclan.servermanager.ParamsBuilder;
+import eu.epicclan.servermanager.R;
+import eu.epicclan.servermanager.components.OnlineStatus;
 import eu.epicclan.servermanager.manager.LayoutManager;
 
 public class ServerLayout extends RelativeLayout implements View.OnClickListener{
@@ -29,6 +33,7 @@ public class ServerLayout extends RelativeLayout implements View.OnClickListener
 
     public ImageView pic;
     public TextView name;
+    public OnlineStatus onlineStatus;
     public Server s;
 
     public RoundedBitmapDrawable headPic;
@@ -78,6 +83,17 @@ public class ServerLayout extends RelativeLayout implements View.OnClickListener
                 LayoutParams lParams = new ParamsBuilder(1000, LayoutParams.WRAP_CONTENT).alignTo(pic.getId(), RIGHT_OF).build();
                 name.setLayoutParams(lParams);
                 addView(name);
+
+                int statusColor = ContextCompat.getColor(getContext(), R.color.status_offline);
+
+                if(s.status.equals("Online")){
+                    statusColor = ContextCompat.getColor(getContext(), R.color.status_online);
+                }
+                onlineStatus = new OnlineStatus(MainActivity.main, null, s.status, statusColor);
+                onlineStatus.setLayoutParams(new ParamsBuilder(200, 60).alignTo(-1, ALIGN_PARENT_RIGHT).build());
+                onlineStatus.setX(-40);
+                onlineStatus.setY((img_size - 60) / 2);
+                addView(onlineStatus);
             }
         }).execute();
     }

@@ -9,7 +9,9 @@ public class Server {
     public String category;
     public String picURL;
 
-    public Server(String startPath, String stopPath, String name, String desc, String category, String picURL){
+    public String status;
+
+    public Server(String startPath, String stopPath, String name, String desc, String category, String picURL, String status){
         this.startPath = startPath;
         this.stopPath = stopPath;
 
@@ -18,6 +20,8 @@ public class Server {
 
         this.category = category;
         this.picURL = picURL;
+
+        this.status = status;
     }
 
 }

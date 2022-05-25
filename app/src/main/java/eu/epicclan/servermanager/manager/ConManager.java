@@ -39,29 +39,6 @@ public class ConManager {
     }
 
     public void getServers() throws IOException {
-//        setup();
-//
-//        OutputStreamWriter os = new OutputStreamWriter(connection.getOutputStream());
-//        PrintWriter pw = new PrintWriter(os);
-//        pw.println(password);
-//        pw.println("getservers");
-//        pw.flush();
-//
-//        BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-//        List<String> lines = new ArrayList<String>();
-//        lines.add(br.readLine());
-//        while(br.ready()) {
-//            lines.add(br.readLine());
-//        }
-//
-//        for(String s : lines) {
-//            System.out.println(s);
-//            String[] args = s.split(";");
-//            MainActivity.manager.serverList.add(new Server(args[2], args[3], args[0], args[1], args[4], args[5]));
-//        }
-//
-//        connection.close();
-
         URL url = new URL("https://epicclan.de/api/getservers");
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestProperty("Accept", "application/json");
@@ -86,7 +63,7 @@ public class ConManager {
             JSONArray servers = (JSONArray) serverJSON.get("servers");
             for(int i = 0; i < servers.length(); i++){
                 JSONObject server = (JSONObject) servers.get(i);
-                MainActivity.manager.serverList.add(new Server("", "", server.getString("name"), server.getString("desc"), server.getString("category"), server.getString("icon")));
+                MainActivity.manager.serverList.add(new Server("", "", server.getString("name"), server.getString("desc"), server.getString("category"), server.getString("icon"), server.getString("status")));
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -124,28 +101,8 @@ public class ConManager {
     }
 
     public void reloadConfig() throws IOException{
-        setup();
-
-        OutputStreamWriter os = new OutputStreamWriter(connection.getOutputStream());
-        PrintWriter pw = new PrintWriter(os);
-        pw.println(password);
-        pw.println("reload");
-        pw.flush();
-
-        BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        List<String> lines = new ArrayList<String>();
-        lines.add(br.readLine());
-        while(br.ready()) {
-            lines.add(br.readLine());
-        }
-
         MainActivity.manager.serverList.clear();
-        for(String s : lines) {
-            String[] args = s.split(";");
-            MainActivity.manager.serverList.add(new Server(args[2], args[3], args[0], args[1], args[4], args[5]));
-        }
-
-        connection.close();
+        getServers();
     }
 
 
