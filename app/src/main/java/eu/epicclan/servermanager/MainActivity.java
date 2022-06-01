@@ -3,6 +3,8 @@ package eu.epicclan.servermanager;
 import android.content.SharedPreferences;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+
 import eu.epicclan.servermanager.manager.LoginManager;
 import eu.epicclan.servermanager.manager.ServerManager;
 

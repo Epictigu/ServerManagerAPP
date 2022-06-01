@@ -1,12 +1,9 @@
 package eu.epicclan.servermanager.manager;
 
-import android.app.ActionBar;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -116,7 +113,7 @@ public class LayoutManager {
 
     public static void buildLogin(){
         a.setContentView(R.layout.layout_password);
-        a.findViewById(R.id.loginb).setOnClickListener(new View.OnClickListener() {
+        a.findViewById(R.id.loginButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 LoginManager.login();

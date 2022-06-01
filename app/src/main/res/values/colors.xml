@@ -8,4 +8,6 @@
     <color name="mainColor">#FB2260</color>
     <color name="status_online">#FB2260</color>
     <color name="status_offline">#5C5B5B</color>
+
+    <color name="background">#232222</color>
 </resources>

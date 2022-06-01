@@ -17,15 +17,15 @@ public class LoginManager {
 
 
     public static void automatedLogin(){
-        if(!savedPassword.equals("")){
+        /*if(!savedPassword.equals("")){
             ((EditText)a.findViewById(R.id.password)).setText(savedPassword);
-            ((CheckBox)a.findViewById(R.id.savepw)).setChecked(true);
+            ((CheckBox)a.findViewById(R.id.saveAccount)).setChecked(true);
             login();
-        }
+        }*/
     }
 
     public static void login(){
-        a.findViewById(R.id.wrongpw).setVisibility(View.INVISIBLE);
+        a.findViewById(R.id.wrongLogin).setVisibility(View.INVISIBLE);
 
         final DelayedRunnable postExec = new DelayedRunnable(null, null);
 
@@ -45,7 +45,7 @@ public class LoginManager {
                     postExec.postExec = new Runnable() {
                         @Override
                         public void run() {
-                            if(((CheckBox)a.findViewById(R.id.savepw)).isChecked()){
+                            if(((CheckBox)a.findViewById(R.id.saveAccount)).isChecked()){
                                 setSavedPassword(password);
                             } else {
                                 setSavedPassword("");
@@ -84,7 +84,7 @@ public class LoginManager {
     }
 
     public static void loginFailed(){
-        a.findViewById(R.id.wrongpw).setVisibility(View.VISIBLE);
+        a.findViewById(R.id.wrongLogin).setVisibility(View.VISIBLE);
     }
 
 }
