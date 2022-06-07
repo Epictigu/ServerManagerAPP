@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         main = this;
 
-        LoginManager.loadSavedPassword();
+        LoginManager.loadSavedLogin();
         new ServerManager();
     }
 
