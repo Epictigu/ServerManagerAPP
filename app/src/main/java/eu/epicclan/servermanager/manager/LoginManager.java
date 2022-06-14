@@ -17,9 +17,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.net.CookieManager;
+import java.net.HttpCookie;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 
 import eu.epicclan.servermanager.DelayedRunnable;
 import eu.epicclan.servermanager.MainActivity;
@@ -32,13 +36,15 @@ public class LoginManager {
     public static String savedUsername = "";
     public static String savedPassword = "";
 
+    public static CookieManager cookieManager = new CookieManager();
 
     public static void automatedLogin(){
-        /*if(!savedPassword.equals("")){
+        if(!savedPassword.equals("")){
+            ((EditText)a.findViewById(R.id.accountName)).setText(savedUsername);
             ((EditText)a.findViewById(R.id.password)).setText(savedPassword);
             ((CheckBox)a.findViewById(R.id.saveAccount)).setChecked(true);
             login();
-        }*/
+        }
     }
 
     public static void login() {
@@ -46,9 +52,6 @@ public class LoginManager {
 
         String username = ((EditText) a.findViewById(R.id.accountName)).getText().toString();
         String password = ((EditText) a.findViewById(R.id.password)).getText().toString();
-
-        System.out.println(username);
-        System.out.println(password);
 
         JsonObject postData = new JsonObject();
         postData.addProperty("username", username);
@@ -73,14 +76,33 @@ public class LoginManager {
                     writer.flush();
 
                     int code = urlConnection.getResponseCode();
-                    System.out.println(code);
-
-                    BufferedReader rd = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                    String line;
-                    while ((line = rd.readLine()) != null) {
-                        System.out.println(line);
+                    if(code >= 300){
+                        loginFailed();
+                        return;
                     }
 
+                    Map<String, List<String>> headerFields = urlConnection.getHeaderFields();
+                    List<String> cookiesHeader = headerFields.get("Set-Cookie");
+
+                    if(cookiesHeader != null){
+                        for(String cookie : cookiesHeader){
+                            cookieManager.getCookieStore().add(null, HttpCookie.parse(cookie).get(0));
+                        }
+                    }
+
+                    if(((CheckBox)a.findViewById(R.id.saveAccount)).isChecked()){
+                        setSavedLogin(username, password);
+                    } else {
+                        setSavedLogin("", "");
+                    }
+
+                    a.manager.load();
+                    a.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            LayoutManager.buildLayout();
+                        }
+                    });
                 } catch (IOException e) {
                     loginFailed();
                 } finally {

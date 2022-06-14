@@ -1,6 +1,7 @@
 package eu.epicclan.servermanager.manager;
 
 import android.os.AsyncTask;
+import android.text.TextUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,6 +42,10 @@ public class ConManager {
     public void getServers() throws IOException {
         URL url = new URL("https://epicclan.de/api/getservers");
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        if(LoginManager.cookieManager.getCookieStore().getCookies().size() > 0){
+            con.setRequestProperty("Cookie",
+                    TextUtils.join(";", LoginManager.cookieManager.getCookieStore().getCookies()));
+        }
         con.setRequestProperty("Accept", "application/json");
 
         int errorCode = con.getResponseCode();

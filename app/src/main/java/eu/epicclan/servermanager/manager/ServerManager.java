@@ -18,8 +18,7 @@ public class ServerManager {
         new AsyncLoad(this).execute();
     }
 
-    public void load(String password){
-        conM.password = password;
+    public void load(){
         try {
             conM.getServers();
         } catch(IOException e){
