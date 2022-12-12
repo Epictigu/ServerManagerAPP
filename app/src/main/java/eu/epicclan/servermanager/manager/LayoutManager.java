@@ -77,7 +77,7 @@ public class LayoutManager {
             @Override
             public void run() {
                 try {
-                    a.manager.conM.reloadConfig();
+                    ConManager.getInstance().reloadConfig();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

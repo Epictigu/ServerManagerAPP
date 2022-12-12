@@ -61,13 +61,13 @@ public class ExtraButton extends AppCompatImageButton{
                     }
                 }).setDelay(200l).execute();
 
-                try {
+                /*try {
                     if(cmd.equalsIgnoreCase("start")){
                         MainActivity.manager.conM.exec("sh " + LayoutManager.clickedOn.s.startPath);
                     } else if(cmd.equalsIgnoreCase("stop")){
                         MainActivity.manager.conM.exec("sh " + LayoutManager.clickedOn.s.stopPath);
                     }
-                } catch(IOException e){e.printStackTrace();}
+                } catch(IOException e){e.printStackTrace();}*/
             }
         });
     }

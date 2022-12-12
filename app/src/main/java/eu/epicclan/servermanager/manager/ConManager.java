@@ -25,22 +25,24 @@ import eu.epicclan.servermanager.utils.Server;
 
 public class ConManager {
 
-    public String ip;
-    public String password;
+    private static ConManager instance = null;
 
-    public Socket connection = null;
-
-    public ConManager(String ip, String password) throws Exception{
-        this.ip = ip;
-        this.password = password;
+    public static ConManager getInstance() {
+        if(instance == null){
+            instance = new ConManager();
+        }
+        return instance;
     }
 
-    public void setup() throws IOException{
-        connection = new Socket(this.ip, 9955);
-    }
+    //public final static String DOMAIN = "https://epicclan.de";
+
+    //Only for testing:
+    public final static String DOMAIN = "http://10.0.2.2:8081";
+
+    private ConManager() {}
 
     public void getServers() throws IOException {
-        URL url = new URL("https://epicclan.de/api/getservers");
+        URL url = new URL(DOMAIN + "/api/getservers");
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         if(LoginManager.cookieManager.getCookieStore().getCookies().size() > 0){
             con.setRequestProperty("Cookie",
@@ -68,83 +70,52 @@ public class ConManager {
             JSONArray servers = (JSONArray) serverJSON.get("servers");
             for(int i = 0; i < servers.length(); i++){
                 JSONObject server = (JSONObject) servers.get(i);
-                MainActivity.manager.serverList.add(new Server("", "", server.getString("name"), server.getString("desc"), server.getString("category"), server.getString("icon"), server.getString("status")));
+                MainActivity.manager.serverList.add(new Server(server.getString("uuid"), server.getString("name"), server.getString("desc"), server.getString("category"), server.getString("icon"), server.getString("status")));
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    public boolean checkPassword(String password){
-        try {
-            setup();
-
-            OutputStreamWriter os = new OutputStreamWriter(connection.getOutputStream());
-            PrintWriter pw = new PrintWriter(os);
-            pw.println("checkpw");
-            pw.println(password);
-            pw.flush();
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            List<String> lines = new ArrayList<String>();
-            lines.add(br.readLine());
-
-            connection.close();
-            if(lines.get(0).equalsIgnoreCase("0")){
-                return false;
-            } else {
-                return true;
-            }
-        } catch(IOException e){
-            e.printStackTrace();
+    public void startServer(String uuid) throws IOException{
+        URL url = new URL(DOMAIN + "/api/start/" + uuid);
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        con.setRequestMethod("POST");
+        if(LoginManager.cookieManager.getCookieStore().getCookies().size() > 0){
+            con.setRequestProperty("Cookie",
+                    TextUtils.join(";", LoginManager.cookieManager.getCookieStore().getCookies()));
         }
-        return false;
+
+        int errorCode = con.getResponseCode();
+        if(errorCode > 299){
+            System.out.println("Konnte den HTTP Request (Server starten) nicht durchführen! [Error-Code: " + errorCode + "]");
+            return;
+        }
+
+        con.disconnect();
     }
 
-    public void exec(String path) throws IOException{
-        new AsyncExec(path).execute();
+    public void stopServer(String uuid) throws IOException{
+        URL url = new URL(DOMAIN + "/api/stop/" + uuid);
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        con.setRequestMethod("POST");
+        if(LoginManager.cookieManager.getCookieStore().getCookies().size() > 0){
+            con.setRequestProperty("Cookie",
+                    TextUtils.join(";", LoginManager.cookieManager.getCookieStore().getCookies()));
+        }
+
+        int errorCode = con.getResponseCode();
+        if(errorCode > 299){
+            System.out.println("Konnte den HTTP Request (Server stoppen) nicht durchführen! [Error-Code: " + errorCode + "]");
+            return;
+        }
+
+        con.disconnect();
     }
 
     public void reloadConfig() throws IOException{
         MainActivity.manager.serverList.clear();
         getServers();
-    }
-
-
-    private class AsyncExec extends AsyncTask<String, Void, String> {
-
-        private String path = "";
-
-        public AsyncExec(String path){
-            this.path = path;
-        }
-
-        @Override
-        protected String doInBackground(String... strings) {
-            try {
-                setup();
-
-                OutputStreamWriter os = new OutputStreamWriter(connection.getOutputStream());
-                PrintWriter pw = new PrintWriter(os);
-                pw.println(password);
-                pw.println("exec");
-                pw.println(path);
-                pw.flush();
-
-                connection.close();
-            } catch(IOException e){
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {}
-        @Override
-        protected void onPreExecute() {}
-        @Override
-        protected void onProgressUpdate(Void... values){}
     }
 
 }

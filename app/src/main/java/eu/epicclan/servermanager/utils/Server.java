@@ -1,8 +1,10 @@
 package eu.epicclan.servermanager.utils;
 
+import java.util.UUID;
+
 public class Server {
-    public String startPath;
-    public String stopPath;
+
+    public UUID uuid;
 
     public String name;
     public String desc;
@@ -11,9 +13,8 @@ public class Server {
 
     public String status;
 
-    public Server(String startPath, String stopPath, String name, String desc, String category, String picURL, String status){
-        this.startPath = startPath;
-        this.stopPath = stopPath;
+    public Server(String uuid, String name, String desc, String category, String picURL, String status){
+        this.uuid = UUID.fromString(uuid);
 
         this.name = name;
         this.desc = desc;

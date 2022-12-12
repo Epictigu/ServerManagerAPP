@@ -1,6 +1,8 @@
 package eu.epicclan.servermanager.utils;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -12,6 +14,7 @@ import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -24,6 +27,7 @@ import eu.epicclan.servermanager.MainActivity;
 import eu.epicclan.servermanager.ParamsBuilder;
 import eu.epicclan.servermanager.R;
 import eu.epicclan.servermanager.components.OnlineStatus;
+import eu.epicclan.servermanager.manager.ConManager;
 import eu.epicclan.servermanager.manager.LayoutManager;
 
 public class ServerLayout extends RelativeLayout implements View.OnClickListener{
@@ -36,7 +40,12 @@ public class ServerLayout extends RelativeLayout implements View.OnClickListener
     public OnlineStatus onlineStatus;
     public Server s;
 
+    public Button startB;
+    public Button stopB;
+
     public RoundedBitmapDrawable headPic;
+
+    public boolean clicked = false;
 
     public ServerLayout(Context context, Server server){
         super(context);
@@ -112,6 +121,69 @@ public class ServerLayout extends RelativeLayout implements View.OnClickListener
     @Override
     public void onClick(View v) {
         LayoutManager.setLastClicked(this);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.main);
+        builder.setTitle(s.name);
+        builder.setMessage(s.desc);
+        builder.setPositiveButton("Starten",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    ConManager.getInstance().startServer(s.uuid.toString());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }).start();
+                        dialogInterface.cancel();
+                    }
+                });
+        builder.setNegativeButton("Stoppen",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    ConManager.getInstance().stopServer(s.uuid.toString());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }).start();
+                        dialogInterface.cancel();
+                    }
+                });
+        builder.setNeutralButton("Abbrechen",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.cancel();
+                    }
+                });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.WHITE);
+                alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(Color.WHITE);
+                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.WHITE);
+            }
+        });
+        alertDialog.show();
 //        LayoutManager.repaintAvailableTasks();
     }
+
+    public void hideButtons(){
+    }
+
+    public void showButtons(){
+
+    }
+
 }

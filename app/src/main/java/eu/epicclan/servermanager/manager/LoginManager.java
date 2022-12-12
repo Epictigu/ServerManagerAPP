@@ -61,7 +61,7 @@ public class LoginManager {
             public void run(){
                 HttpURLConnection urlConnection = null;
                 try {
-                    URL url = new URL("https://epicclan.de/api/auth/signin");
+                    URL url = new URL(ConManager.DOMAIN + "/api/auth/signin");
 
                     urlConnection = (HttpURLConnection) url.openConnection();
                     urlConnection.setRequestProperty("Content-Type", "application/json");
@@ -104,6 +104,7 @@ public class LoginManager {
                         }
                     });
                 } catch (IOException e) {
+                    e.printStackTrace();
                     loginFailed();
                 } finally {
                     if (urlConnection != null) {
